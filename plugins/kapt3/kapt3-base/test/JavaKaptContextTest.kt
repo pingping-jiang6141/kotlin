@@ -3,13 +3,14 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+package org.jetbrains.kotlin.kapt.base.test
+
+import junit.framework.TestCase
 import org.jetbrains.kotlin.kapt3.base.KaptContext
 import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.io.File
 import java.nio.file.Files
@@ -18,7 +19,7 @@ import javax.annotation.processing.Processor
 import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.TypeElement
 
-class JavaKaptContextTest {
+class JavaKaptContextTest : TestCase() {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
 
