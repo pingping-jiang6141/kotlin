@@ -40,8 +40,8 @@ class KotlinGradleWebMultiplatformModuleBuilder : KotlinGradleAbstractMultiplatf
                     }
                     $commonTestName {
                         dependencies {
-                    		implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                    		implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
+                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
                         }
                     }
                     $jvmSourceName {
