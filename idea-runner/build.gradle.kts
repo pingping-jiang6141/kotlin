@@ -20,4 +20,5 @@ val ideaSandboxDir: File by rootProject.extra
 
 runIdeTask("runIde", ideaPluginDir, ideaSandboxDir) {
     dependsOn(":dist", ":ideaPlugin")
+    maxHeapSize = "3g"
 }
