@@ -21,7 +21,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-jvm6-1.0.jar")
+            }
         }
     }
 
@@ -34,7 +36,9 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             embedProject(innerProject)
             gradleBuildScript(innerProject.projectName).appendText("\nrepositories { jcenter() }; dependencies { compile rootProject }")
 
-            testResolveAllConfigurations(innerProject.projectName)
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:runtime --> sample-lib-nodejs-1.0.jar")
+            }
         }
     }
 
@@ -103,6 +107,25 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
             gradleBuildScript(innerProject.projectName).appendText("\ndependencies { compile rootProject }")
 
             testResolveAllConfigurations(innerProject.projectName)
+        }
+    }
+
+    @Test
+    fun testJvmKtAppDependsOnMppTestRuntime() {
+        val outerProject = Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")
+        val innerProject = Project("simpleProject")
+
+        with(outerProject) {
+            embedProject(innerProject)
+
+            gradleBuildScript(innerProject.projectName).appendText(
+                "\ndependencies { testCompile project(path: ':', configuration: 'jvm6TestRuntime') }"
+            )
+
+            testResolveAllConfigurations(innerProject.projectName) {
+                assertContains(">> :${innerProject.projectName}:testCompile --> sample-lib-jvm6-1.0.jar")
+                assertContains(">> :${innerProject.projectName}:testRuntime --> sample-lib-jvm6-1.0.jar")
+            }
         }
     }
 

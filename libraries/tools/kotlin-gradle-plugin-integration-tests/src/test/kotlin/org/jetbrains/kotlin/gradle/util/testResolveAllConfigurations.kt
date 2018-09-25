@@ -39,7 +39,7 @@ private fun generateResolveAllConfigurationsTask(exclude: String) =
                     .each { configuration ->
                         try {
                             println "Resolving " + configuration.path
-                            configuration.files.each { println it }
+                            configuration.files.each { println '>> ' + configuration.path + ' --> ' + it.name }
                             println "OK, resolved " + configuration.path + "\n"
                         } catch (e) {
                             def ex = e

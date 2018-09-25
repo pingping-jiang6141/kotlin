@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
 import org.gradle.api.Task
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.Usage
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
@@ -154,7 +157,10 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         val configurations = project.configurations
 
-        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName)
+        val defaultConfiguration = configurations.maybeCreate(target.defaultConfigurationName).apply {
+            localToProject(project)
+        }
+
         val mainCompilation = target.compilations.maybeCreate(KotlinCompilation.MAIN_COMPILATION_NAME)
 
         val compileConfiguration = configurations.maybeCreate(mainCompilation.deprecatedCompileConfigurationName)
@@ -240,6 +246,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             configurations: ConfigurationContainer
         ) {
             val compileConfiguration = configurations.maybeCreate(compilation.deprecatedCompileConfigurationName).apply {
+                localToProject(target.project)
+                usesPlatformOf(target)
                 isVisible = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Dependencies for $compilation (deprecated, use '${compilation.implementationConfigurationName} ' instead)."
@@ -262,6 +270,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             }
 
             val compileOnlyConfiguration = configurations.maybeCreate(compilation.compileOnlyConfigurationName).apply {
+                localToProject(target.project)
+                usesPlatformOf(target)
                 isVisible = false
                 isCanBeResolved = true // Needed for IDE import
                 description = "Compile only dependencies for $compilation."
@@ -278,6 +288,8 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
             if (compilation is KotlinCompilationToRunnableFiles) {
                 val runtimeConfiguration = configurations.maybeCreate(compilation.deprecatedRuntimeConfigurationName).apply {
+                    localToProject(target.project)
+                    usesPlatformOf(target)
                     extendsFrom(compileConfiguration)
                     isVisible = false
                     isCanBeResolved = true // Needed for IDE import

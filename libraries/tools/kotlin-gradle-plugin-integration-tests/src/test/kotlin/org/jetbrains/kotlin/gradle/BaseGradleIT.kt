@@ -196,7 +196,7 @@ abstract class BaseGradleIT {
         val projectDir = File(workingDir.canonicalFile, projectName)
 
         open fun setupWorkingDir() {
-            if (!projectDir.isDirectory)
+            if (!projectDir.isDirectory || projectDir.listFiles().isEmpty())
                 copyRecursively(this.resourcesRoot, workingDir)
         }
 
