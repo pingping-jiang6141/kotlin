@@ -482,6 +482,13 @@ public class AsmUtil {
         DeclarationDescriptor containingDeclaration = memberDescriptor.getContainingDeclaration();
         Visibility memberVisibility = memberDescriptor.getVisibility();
 
+        if (DescriptorUtils.isCompanionObject(memberDescriptor) &&
+            DescriptorUtils.isInterface(containingDeclaration) &&
+            Visibilities.isPrivate(memberVisibility)
+        ) {
+            return NO_FLAG_PACKAGE_PRIVATE;
+        }
+
         if (memberDescriptor instanceof FunctionDescriptor &&
             isInlineClassWrapperConstructor((FunctionDescriptor) memberDescriptor, kind)) {
             return ACC_PRIVATE;
