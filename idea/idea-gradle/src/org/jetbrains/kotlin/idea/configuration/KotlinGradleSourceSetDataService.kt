@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.gradle.ArgsInfo
 import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
+import org.jetbrains.kotlin.idea.configuration.GradlePropertiesFileFacade.Companion.KOTLIN_CODE_STYLE_GRADLE_SETTING
 import org.jetbrains.kotlin.idea.facet.*
 import org.jetbrains.kotlin.idea.formatter.KotlinObsoleteCodeStyle
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
@@ -149,7 +150,7 @@ class KotlinGradleProjectDataService : AbstractProjectDataService<ModuleData, Vo
             GradleProjectImportHandler.getInstances(project).forEach { it.importByModule(kotlinFacet, moduleNode) }
         }
 
-        val codeStyleStr = GradlePropertiesFileUtils.readProperty(project, GradlePropertiesFileUtils.KOTLIN_CODE_STYLE_GRADLE_SETTING)
+        val codeStyleStr = GradlePropertiesFileFacade.forProject(project).readProperty(KOTLIN_CODE_STYLE_GRADLE_SETTING)
         ProjectCodeStyleImporter.apply(project, codeStyleStr)
     }
 }
@@ -333,6 +334,6 @@ internal fun adjustClasspath(kotlinFacet: KotlinFacet, dependencyClasspath: List
 }
 
 internal fun findKotlinCoroutinesProperty(project: Project): String {
-    return GradlePropertiesFileUtils.readProperty(project, "kotlin.coroutines")
+    return GradlePropertiesFileFacade.forProject(project).readProperty("kotlin.coroutines")
         ?: CoroutineSupport.getCompilerArgument(LanguageFeature.Coroutines.defaultState)
 }

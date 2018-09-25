@@ -12,6 +12,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.util.rootManager
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
@@ -39,12 +40,16 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder : GradleModuleBuil
             val builder = BuildScriptDataBuilder(buildGradle)
             GradleKotlinMPPFrameworkSupportProvider().addSupport(builder, module, sdk = null, specifyPluginVersionIfNeeded = true)
             VfsUtil.saveText(buildGradle, builder.buildConfigurationPart() + builder.buildMainPart() + buildMultiPlatformPart())
+
+            if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
         } finally {
             flushSettingsGradleCopy(module)
         }
     }
 
     protected abstract fun buildMultiPlatformPart(): String
+
+    protected open val notImportedCommonSourceSets = false
 
     companion object {
         const val productionSuffix = "Main"
